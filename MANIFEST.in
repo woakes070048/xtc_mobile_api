@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include xtc_mobile_api *.css
+recursive-include xtc_mobile_api *.csv
+recursive-include xtc_mobile_api *.html
+recursive-include xtc_mobile_api *.ico
+recursive-include xtc_mobile_api *.js
+recursive-include xtc_mobile_api *.json
+recursive-include xtc_mobile_api *.md
+recursive-include xtc_mobile_api *.png
+recursive-include xtc_mobile_api *.py
+recursive-include xtc_mobile_api *.svg
+recursive-include xtc_mobile_api *.txt
+recursive-exclude xtc_mobile_api *.pyc
