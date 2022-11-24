@@ -93,7 +93,7 @@ def get_order_details(**args):
     )    
     for so in so_details:
         batch_details=get_batch_details_based_on_itemcode(item_code=so.item_code)
-        so.update(frappe._dict({"batch_details":batch_details.get("result")}))
+        so.update(frappe._dict({"batch_details":batch_details.get("result") or ""}))
     return {"result": so_details }
 
 
