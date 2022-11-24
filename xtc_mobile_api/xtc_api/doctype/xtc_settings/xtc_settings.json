@@ -1,0 +1,61 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2022-11-23 13:30:50.727144",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "alert_before_days",
+  "picker_warehouse",
+  "url_for_label_print"
+ ],
+ "fields": [
+  {
+   "fieldname": "alert_before_days",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Batch Expiry : Alert Before Days",
+   "reqd": 1
+  },
+  {
+   "description": "used for Delivery Note",
+   "fieldname": "picker_warehouse",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Picker Warehouse",
+   "options": "Warehouse",
+   "reqd": 1
+  },
+  {
+   "fieldname": "url_for_label_print",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "URL for Label Print",
+   "options": "URL",
+   "reqd": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2022-11-23 13:32:44.218509",
+ "modified_by": "Administrator",
+ "module": "XTC API",
+ "name": "XTC Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}
