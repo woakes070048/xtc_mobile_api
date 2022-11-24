@@ -50,7 +50,8 @@ def get_order_list(**args):
         """SELECT
             tso.name as so_no,
             tso.customer_name as client,
-            tso.delivery_date as delivery_date
+            tso.delivery_date as delivery_date,
+            IFNULL(tso.picker_cf,'') as picker
         FROM
             `tabSales Order` as tso
         WHERE
@@ -65,11 +66,17 @@ def get_order_list(**args):
 @frappe.whitelist(allow_guest=True)
 def get_order_details(**args):
     args["so_no"] = args.get("so_no")
-    data = frappe.db.sql(
+    picker=args.get("picker")
+    print('picker',picker,args["so_no"])
+    if picker:
+        frappe.db.set_value('Sales Order', args["so_no"], 'picker_cf', picker)
+        frappe.db.commit()
+    so_details = frappe.db.sql(
         """
             SELECT
                 tso.name as so_no,
                 tso.customer_name as client,
+                tso.picker_cf as picker,
                 tsoi.name as so_line_no,
                 tsoi.item_code ,
                 tsoi.item_name ,
@@ -84,11 +91,62 @@ def get_order_details(**args):
         args,
         as_dict=True,debug=False
     )    
-    return {"result": data}
+    for so in so_details:
+        batch_details=get_batch_details_based_on_itemcode(item_code=so.item_code)
+        so.update(frappe._dict({"batch_details":batch_details.get("result")}))
+    return {"result": so_details }
 
 
 @frappe.whitelist(allow_guest=True)
-def get_batch_details(**args):
+def get_batch_details_based_on_so(**args):
+    args["so_no"] = args.get("so_no")
+    # args["item_code"] = args.get("item_code")
+    args["picker_warehouse"] = frappe.db.get_single_value('XTC Settings', 'picker_warehouse')
+
+    # from erpnext.stock.report.batch_wise_balance_history.batch_wise_balance_history import execute
+    # default_company=frappe.defaults.get_user_default("Company")
+    # year_start_date = frappe.defaults.get_global_default("year_start_date")
+    # # getdate(year.year_start_date)
+    # today=frappe.utils.today()
+    # data = execute({'company': default_company, 'from_date': year_start_date, 'to_date': today, 'item_code': args.get("item_code")})
+    data = frappe.db.sql(
+        """
+select
+    `tabBatch`.item as item_code,
+    `tabBatch`.batch_id,
+    DATEDIFF(STR_TO_DATE(`tabBatch`.expiry_date, '%%Y-%%m-%%d'),CURDATE()) AS days_to_expire,
+    (
+    SELECT
+        value
+    FROM
+        `tabSingles`
+    where
+        doctype = 'XTC Settings'
+        and field = 'alert_before_days' ) as alert_before_days,
+     sum(`tabStock Ledger Entry`.actual_qty) as batch_qty
+from
+    `tabBatch`
+join `tabStock Ledger Entry` ignore index (item_code,
+    warehouse)
+        on
+    (`tabBatch`.batch_id = `tabStock Ledger Entry`.batch_no )
+where
+    `tabStock Ledger Entry`.item_code in (select tsoi.item_code from `tabSales Order Item` as tsoi where tsoi.parent=%(so_no)s)
+    and `tabStock Ledger Entry`.warehouse = %(picker_warehouse)s
+    and `tabStock Ledger Entry`.is_cancelled = 0
+group by
+    batch_id
+order by
+    `tabBatch`.expiry_date ASC,
+    `tabBatch`.creation ASC
+    """,
+        args,
+        as_dict=True,
+    )    
+    return {"result": data}
+
+@frappe.whitelist(allow_guest=True)
+def get_batch_details_based_on_itemcode(**args):
 
     args["item_code"] = args.get("item_code")
     args["picker_warehouse"] = frappe.db.get_single_value('XTC Settings', 'picker_warehouse')
@@ -197,7 +255,12 @@ def create_dn_based_on_picked_details(*args,**kwargs):
     dn.set_onload("ignore_price_list", True)
     dn.save(ignore_permissions=True)
     dn.submit()
-    return {"result": dn.name}
+    url=get_deliverynote_pdf(dn.name)
+    return {"result": 
+        {"delivery_note": dn.name,
+         "delivery_pdf_url":url
+        }
+    }
 
         
 
