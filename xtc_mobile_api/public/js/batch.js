@@ -16,7 +16,11 @@ frappe.ui.form.on('Batch', {
                                 let ean_code = records[0].barcode
                                 // http://192.168.3.16/label.php?U=https://www.xtc-gelato.org/combQR.php?I=[Item Name]&E=[EAN Code]&B=[Batch number]&D=[Best Before Date]&P=[Production Date]
                                 let company_url = 'https://www.xtc-gelato.org/combQR.php'
-                                let encoded_print_url = encodeURI(company_url + "?I=" + frm.doc.item_name + "&E=" + ean_code + "&B=" + frm.doc.name + "&D=" + frm.doc.expiry_date + "&P=" + frm.doc.manufacturing_date)
+                                let encoded_print_url = encodeURIComponent(
+                                    company_url + "?I=" + frm.doc.item_name + "&E=" + ean_code + "&B=" + frm.doc.name + "&D="
+                                 + frm.doc.expiry_date + "&P="
+                                 + frm.doc.manufacturing_date
+                                 )
                                 let print_url = url_for_label_print + "?U=" + encoded_print_url
                                 console.log(print_url);
                                 window.open(print_url, '_blank');
