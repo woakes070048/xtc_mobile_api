@@ -19,8 +19,9 @@ from frappe.utils import   cstr, flt
 from erpnext.setup.doctype.item_group.item_group import get_item_group_defaults
 from erpnext.selling.doctype.sales_order.sales_order import make_delivery_note
 from frappe.utils.pdf import get_pdf
-from frappe.desk.form.utils import get_pdf_link
+# from frappe.desk.form.utils import get_pdf_link
 from frappe.model.mapper import map_doc
+from urllib.parse import quote
 
 __version__ = "0.0.1"
 
@@ -46,6 +47,8 @@ def get_order_summary(**args):
 
 @frappe.whitelist(allow_guest=True)
 def get_order_list(**args):
+    url_for_label_print = frappe.db.get_single_value('XTC Settings', 'url_for_label_print')
+
     data = frappe.db.sql(
         """SELECT
             tso.name as so_no,
@@ -61,6 +64,9 @@ def get_order_list(**args):
             and tso.per_delivered < 100""",
         as_dict=True,
     )
+    for d in data:
+        label_url="{0}?C={1}&L={2}".format(url_for_label_print, quote(d.client), quote(d.so_no))
+        d.update({"print_label_url": label_url})
     return {"result": data}
 
 @frappe.whitelist(allow_guest=True)
@@ -260,82 +266,37 @@ def create_dn_based_on_picked_details(*args,**kwargs):
         {"delivery_note": dn.name,
          "delivery_pdf_url":url
         }
-    }
-
-        
-
-
-    
-# def make_delivery_note1(source_name, target_doc=None, skip_item_mapping=False):
-#     def set_missing_values(source, target):
-#         target.run_method("set_missing_values")
-#         target.run_method("set_po_nos")
-#         target.run_method("calculate_taxes_and_totals")
-
-#         if source.company_address:
-#             target.update({"company_address": source.company_address})
-#         else:
-#             # set company address
-#             target.update(get_company_address(target.company))
-
-#         if target.company_address:
-#             target.update(get_fetch_values("Delivery Note", "company_address", target.company_address))
-
-    # def update_item(source, target, source_parent):
-
-    #     target.base_amount = (flt(source.qty) - flt(source.delivered_qty)) * flt(source.base_rate)
-    #     target.amount = (flt(source.qty) - flt(source.delivered_qty)) * flt(source.rate)
-    #     target.qty = flt(source.qty) - flt(source.delivered_qty)
-
-    #     item = get_item_defaults(target.item_code, source_parent.company)
-    #     item_group = get_item_group_defaults(target.item_code, source_parent.company)
-
-    #     if item:
-    #         target.cost_center = (
-    #             frappe.db.get_value("Project", source_parent.project, "cost_center")
-    #             or item.get("buying_cost_center")
-    #             or item_group.get("buying_cost_center")
-            # )
-
-    # mapper = {
-    #     "Sales Order": {"doctype": "Delivery Note", "validation": {"docstatus": ["=", 1]}},
-    #     "Sales Taxes and Charges": {"doctype": "Sales Taxes and Charges", "add_if_empty": True},
-    #     "Sales Team": {"doctype": "Sales Team", "add_if_empty": True},
-    # }
-
-    # if not skip_item_mapping:
-
-    #     def condition(doc):
-    #         # make_mapped_doc sets js `args` into `frappe.flags.args`
-    #         if frappe.flags.args and frappe.flags.args.delivery_dates:
-    #             if cstr(doc.delivery_date) not in frappe.flags.args.delivery_dates:
-    #                 return False
-    #         return abs(doc.delivered_qty) < abs(doc.qty) and doc.delivered_by_supplier != 1
-
-    #     mapper["Sales Order Item"] = {
-    #         "doctype": "Delivery Note Item",
-    #         "field_map": {
-    #             "rate": "rate",
-    #             "name": "so_detail",
-    #             "parent": "against_sales_order",
-    #         },
-    #         "postprocess": update_item,
-    #         "condition": condition,
-    #     }
-
-    # target_doc = get_mapped_doc("Sales Order", source_name, mapper, target_doc, set_missing_values)
-
-    # target_doc.set_onload("ignore_price_list", True)
-
-    # return target_doc  
+    }      
 
 @frappe.whitelist(allow_guest=True)
 def get_deliverynote_pdf(docname):
     format=get_default_print_format("Delivery Note")
-    pdf_link=get_pdf_link('Delivery Note',docname,format,no_letterhead=0)
-    return "{}{}".format(get_url(), pdf_link)   
+    # pdf_link=get_pdf_link('Delivery Note',docname,format,no_letterhead=0)
 
+    filecontent = get_pdf(frappe.get_print("Delivery Note", docname, format, doc=None, no_letterhead=0))
+    return attach_file(
+        content=filecontent,
+        **{
+            "doctype": "Delivery Note",
+            "docname": docname,
+            "filename": "%s-deliverynote.pdf" % (docname,),
+        }
+    )
 
+def attach_file(content, **args):
+    _file = frappe.get_doc(
+        {
+            "doctype": "File",
+            "file_name": args.get("filename"),
+            "attached_to_doctype": args.get("doctype"),
+            "attached_to_name": args.get("docname"),
+            "is_private": 0,
+            "content": content,
+        }
+    )
+    _file.save()
+    frappe.db.commit()
+    return "{}{}".format(get_url(), _file.file_url)
 
 def get_default_print_format(doctype):
     return (
