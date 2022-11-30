@@ -219,7 +219,7 @@ def create_dn_based_on_picked_details(*args,**kwargs):
     }
     # table_map={"doctype": dn.doctype}
     # x=map_doc(sales_order, dn, table_map)
-    dn = get_mapped_doc("Sales Order", source_name, table_map, target_doc=None)
+    dn = get_mapped_doc("Sales Order", source_name, table_map, target_doc=None,postprocess=None,ignore_permissions=True)
     dn.customer=so[0].get("client")
     dn.set_warehouse=warehouse
     dn.items=[]
