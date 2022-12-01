@@ -30,7 +30,7 @@ def get_order_summary(**args):
     data = frappe.db.sql(
         """ SELECT
                 COUNT(DISTINCT tso.customer) as clients,
-                SUM(tsoi.qty) as pieces
+                FORMAT(SUM(tsoi.qty),0) as pieces
             FROM
                 `tabSales Order` as tso
             inner join `tabSales Order Item` as tsoi 
@@ -54,7 +54,8 @@ def get_order_list(**args):
             tso.name as so_no,
             tso.customer_name as client,
             tso.delivery_date as delivery_date,
-            IFNULL(tso.picker_cf,'') as picker
+            IFNULL(tso.picker_cf,'') as picker,
+            IFNULL(tso.picker_instruction_cf,'') as picker_instruction
         FROM
             `tabSales Order` as tso
         WHERE
