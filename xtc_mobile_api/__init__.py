@@ -22,6 +22,7 @@ from frappe.utils.pdf import get_pdf
 # from frappe.desk.form.utils import get_pdf_link
 from frappe.model.mapper import map_doc
 from urllib.parse import quote
+from urllib.parse import urlencode
 
 __version__ = "0.0.1"
 
@@ -67,7 +68,8 @@ def get_order_list(**args):
         as_dict=True,
     )
     for d in data:
-        label_url="{0}?U={1}?C={2}&L={3}".format(url_for_label_print, quote(main_site_url_for_so_mobile__label),quote(d.client), quote(d.so_no))
+        url_to_encode="{0}?C={1}&L={2}".format(main_site_url_for_so_mobile__label,d.client,d.so_no)
+        label_url="{0}?U={1}".format(url_for_label_print,quote(url_to_encode, safe='()*!\''))
         d.update({"print_label_url": label_url})
     return {"result": data}
 
