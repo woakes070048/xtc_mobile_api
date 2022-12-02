@@ -8,7 +8,9 @@
  "field_order": [
   "alert_before_days",
   "picker_warehouse",
-  "url_for_label_print"
+  "url_for_label_print",
+  "main_site_url_for_batch_label",
+  "main_site_url_for_so_mobile__label"
  ],
  "fields": [
   {
@@ -34,12 +36,26 @@
    "label": "URL for Label Print",
    "options": "URL",
    "reqd": 1
+  },
+  {
+   "fieldname": "main_site_url_for_batch_label",
+   "fieldtype": "Data",
+   "label": "Main site URL for Batch Label",
+   "options": "URL",
+   "reqd": 1
+  },
+  {
+   "fieldname": "main_site_url_for_so_mobile__label",
+   "fieldtype": "Data",
+   "label": "Main site URL for SO Mobile  Label",
+   "options": "URL",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2022-11-23 13:32:44.218509",
+ "modified": "2022-12-02 16:16:15.689687",
  "modified_by": "Administrator",
  "module": "XTC API",
  "name": "XTC Settings",
