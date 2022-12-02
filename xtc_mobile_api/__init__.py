@@ -48,6 +48,7 @@ def get_order_summary(**args):
 @frappe.whitelist(allow_guest=True)
 def get_order_list(**args):
     url_for_label_print = frappe.db.get_single_value('XTC Settings', 'url_for_label_print')
+    main_site_url_for_so_mobile__label= frappe.db.get_single_value('XTC Settings', 'main_site_url_for_so_mobile__label')
 
     data = frappe.db.sql(
         """SELECT
@@ -66,7 +67,7 @@ def get_order_list(**args):
         as_dict=True,
     )
     for d in data:
-        label_url="{0}?C={1}&L={2}".format(url_for_label_print, quote(d.client), quote(d.so_no))
+        label_url="{0}?U={1}?C={2}&L={3}".format(url_for_label_print, quote(main_site_url_for_so_mobile__label),quote(d.client), quote(d.so_no))
         d.update({"print_label_url": label_url})
     return {"result": data}
 
