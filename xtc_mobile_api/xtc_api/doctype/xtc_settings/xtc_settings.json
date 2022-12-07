@@ -8,9 +8,12 @@
  "field_order": [
   "alert_before_days",
   "picker_warehouse",
+  "column_break_3",
   "url_for_label_print",
   "main_site_url_for_batch_label",
-  "main_site_url_for_so_mobile__label"
+  "main_site_url_for_so_mobile__label",
+  "section_break_7",
+  "mobile_app_help_content"
  ],
  "fields": [
   {
@@ -50,12 +53,25 @@
    "label": "Main site URL for SO Mobile  Label",
    "options": "URL",
    "reqd": 1
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_7",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "mobile_app_help_content",
+   "fieldtype": "HTML Editor",
+   "label": "Mobile App Help Content"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2022-12-02 16:16:15.689687",
+ "modified": "2022-12-07 13:45:39.199985",
  "modified_by": "Administrator",
  "module": "XTC API",
  "name": "XTC Settings",
@@ -70,6 +86,48 @@
    "role": "System Manager",
    "share": 1,
    "write": 1
+  },
+  {
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Sales User",
+   "share": 1
+  },
+  {
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Sales Manager",
+   "share": 1
+  },
+  {
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Maintenance User",
+   "share": 1
+  },
+  {
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Accounts User",
+   "share": 1
+  },
+  {
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Stock User",
+   "share": 1
+  },
+  {
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Stock Manager",
+   "share": 1
   }
  ],
  "sort_field": "modified",
