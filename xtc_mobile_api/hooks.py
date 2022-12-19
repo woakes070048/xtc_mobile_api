@@ -80,7 +80,7 @@ doctype_js = {"Batch" : "public/js/batch.js"}
 # }
 #
 # has_permission = {
-#	"Event": "frappe.desk.doctype.event.event.has_permission",
+#	"Event": "frappe.desk.doctype.event.event.has_permission",	
 # }
 
 # DocType Class
@@ -95,13 +95,11 @@ doctype_js = {"Batch" : "public/js/batch.js"}
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-#	"*": {
-#		"on_update": "method",
-#		"on_cancel": "method",
-#		"on_trash": "method"
-#	}
-# }
+doc_events = {
+	"Quality Inspection": {
+		"on_update": "xtc_mobile_api.api.on_save_submit_quality_inspection"
+	}
+}
 
 # Scheduled Tasks
 # ---------------
