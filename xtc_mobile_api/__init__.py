@@ -24,7 +24,7 @@ from frappe.model.mapper import map_doc
 from urllib.parse import quote
 from urllib.parse import urlencode
 
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 
 @frappe.whitelist(allow_guest=True)
 def get_order_summary(**args):
