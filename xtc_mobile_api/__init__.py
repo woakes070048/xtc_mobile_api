@@ -230,7 +230,7 @@ def create_dn_based_on_picked_details(*args,**kwargs):
     # table_map={"doctype": dn.doctype}
     # x=map_doc(sales_order, dn, table_map)
     dn = get_mapped_doc("Sales Order", source_name, table_map, target_doc=None,postprocess=None,ignore_permissions=True)
-    dn.customer=so[0].get("client")
+    dn.customer= frappe.db.get_list('Customer', filters={'customer_name': ['=', so[0].get("client")]},fields=['name'],pluck='name')[0]
     dn.set_warehouse=warehouse
     dn.items=[]
     for s in so:
@@ -263,7 +263,9 @@ def create_dn_based_on_picked_details(*args,**kwargs):
         dn.update(get_fetch_values("Delivery Note", "company_address", dn.company_address))    
 
     dn.set_onload("ignore_price_list", True)
+    print('before save'*10)
     dn.save(ignore_permissions=True)
+    print('before submit'*10)
     dn.submit()
     url=get_deliverynote_pdf(dn.name)
     return {"result": 
