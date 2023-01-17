@@ -106,7 +106,7 @@ def get_order_details(**args):
         so.update(frappe._dict({"batch_details":batch_details.get("result") or ""}))
     return {"result": so_details }
 
-
+# not used by mobile
 @frappe.whitelist(allow_guest=True)
 def get_batch_details_based_on_so(**args):
     args["so_no"] = args.get("so_no")
@@ -144,6 +144,7 @@ where
     `tabStock Ledger Entry`.item_code in (select tsoi.item_code from `tabSales Order Item` as tsoi where tsoi.parent=%(so_no)s)
     and `tabStock Ledger Entry`.warehouse = %(picker_warehouse)s
     and `tabStock Ledger Entry`.is_cancelled = 0
+    and  batch_qty >=1
 group by
     batch_id
 order by
@@ -192,6 +193,7 @@ where
     `tabStock Ledger Entry`.item_code = %(item_code)s
     and `tabStock Ledger Entry`.warehouse = %(picker_warehouse)s
     and `tabStock Ledger Entry`.is_cancelled = 0
+    and  batch_qty >=1
 group by
     batch_id
 order by
