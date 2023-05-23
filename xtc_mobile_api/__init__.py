@@ -74,6 +74,7 @@ def get_order_list(**args):
     return {"result": data}
 
 @frappe.whitelist(allow_guest=True)
+#  SO Items where delivered qty <> qty  
 def get_order_details(**args):
     args["so_no"] = args.get("so_no")
     picker=args.get("picker")
@@ -90,13 +91,14 @@ def get_order_details(**args):
                 tsoi.name as so_line_no,
                 tsoi.item_code ,
                 tsoi.item_name ,
-                tsoi.qty
+                tsoi.qty-tsoi.delivered_qty
             FROM
                 `tabSales Order` as tso
             inner join `tabSales Order Item` as tsoi
             on tso.name=tsoi.parent
             where
-                tso.name = %(so_no)s
+                tsoi.delivered_qty != tsoi.qty
+                and tso.name = %(so_no)s
     """,
         args,
         as_dict=True,debug=False
