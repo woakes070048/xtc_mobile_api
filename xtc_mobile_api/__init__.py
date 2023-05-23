@@ -91,7 +91,7 @@ def get_order_details(**args):
                 tsoi.name as so_line_no,
                 tsoi.item_code ,
                 tsoi.item_name ,
-                tsoi.qty-tsoi.delivered_qty
+                tsoi.qty-tsoi.delivered_qty as qty
             FROM
                 `tabSales Order` as tso
             inner join `tabSales Order Item` as tsoi
