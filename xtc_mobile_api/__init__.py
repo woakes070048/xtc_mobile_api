@@ -271,6 +271,7 @@ def create_dn_based_on_picked_details(*args,**kwargs):
     dn.save(ignore_permissions=True)
     print('before submit'*10)
     dn.submit()
+    frappe.db.set_value("Sales Order",source_name, 'picker_cf',None)
     url=get_deliverynote_pdf(dn.name)
     return {"result": 
         {"delivery_note": dn.name,
