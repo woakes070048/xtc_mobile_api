@@ -1,5 +1,5 @@
 {
- "cards_label": "XTC",
+ "cards_label": "XTC Mobile API",
  "category": "Modules",
  "charts": [],
  "creation": "2022-11-24 17:38:34.556818",
@@ -33,7 +33,7 @@
    "type": "Link"
   }
  ],
- "modified": "2022-11-24 17:39:44.134400",
+ "modified": "2023-06-02 19:49:12.480093",
  "modified_by": "Administrator",
  "module": "XTC API",
  "name": "XTC",
